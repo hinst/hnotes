@@ -2,6 +2,7 @@ package hn
 
 import (
 	"net/http"
+	"fmt"
 )
 
 type TWebUI struct {
@@ -18,7 +19,10 @@ func (this *TWebUI) Start() {
 }
 
 func (this *TWebUI) AddHandlers() {
-	this.InstallFileHandler()
+	this.InstallFileHandler("")
+	this.InstallFileHandler("/static/css")
+	this.InstallFileHandler("/static/js")
+	this.InstallFileHandler("/static/media")
 }
 
 func (this *TWebUI) AddHandler(subUrl string, function func(response http.ResponseWriter, request *http.Request)) {
@@ -26,9 +30,11 @@ func (this *TWebUI) AddHandler(subUrl string, function func(response http.Respon
 	http.HandleFunc(url, function)
 }
 
-func (this *TWebUI) InstallFileHandler() {
-	var directoryPath = AppDir + "/../ui/build"
+func (this *TWebUI) InstallFileHandler(subDir string) {
+	var directoryPath = AppDir + "/../ui/build" +subDir
+	var url = this.RootURL + subDir + "/"
 	var fileDirectory = http.Dir(directoryPath)
 	var fileServerHandler = http.FileServer(fileDirectory)
-	http.Handle(this.RootURL, http.StripPrefix(this.RootURL, fileServerHandler))
+	fmt.Println(url + " -> " + directoryPath)
+	http.Handle(url, http.StripPrefix(url, fileServerHandler))
 }
