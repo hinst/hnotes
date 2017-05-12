@@ -27,7 +27,7 @@ func (this *TWebUI) AddHandler(subUrl string, function func(response http.Respon
 }
 
 func (this *TWebUI) InstallFileHandler() {
-	var directoryPath = AppDir + "/ui/build"
+	var directoryPath = AppDir + "/../ui/build"
 	var fileDirectory = http.Dir(directoryPath)
 	var fileServerHandler = http.FileServer(fileDirectory)
 	http.Handle(this.RootURL, http.StripPrefix(this.RootURL, fileServerHandler))

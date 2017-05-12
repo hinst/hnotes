@@ -3,6 +3,7 @@ package hn
 import "os"
 import "path/filepath"
 import "sync"
+import "net/http"
 
 type TApp struct {
 	Holder sync.WaitGroup
@@ -15,6 +16,7 @@ func (this *TApp) Run() {
 	this.Holder.Add(1)
 	this.WebUI = (&TWebUI{}).Create()
 	this.WebUI.Start()
+	go http.ListenAndServe(":9001", nil)
 	InstallShutdownReceiver(this.stop)
 	this.Holder.Wait()
 }
