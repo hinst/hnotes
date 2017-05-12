@@ -14,11 +14,11 @@ func (this *TWebUI) Create() *TWebUI {
 }
 
 func (this *TWebUI) Start() {
-
+	this.AddHandlers()
 }
 
 func (this *TWebUI) AddHandlers() {
-
+	this.InstallFileHandler()
 }
 
 func (this *TWebUI) AddHandler(subUrl string, function func(response http.ResponseWriter, request *http.Request)) {
@@ -26,11 +26,9 @@ func (this *TWebUI) AddHandler(subUrl string, function func(response http.Respon
 	http.HandleFunc(url, function)
 }
 
-func (this *TWebUI) InstallFileHandler(folderName string) {
-	var url = this.RootURL + "/" + folderName + "/"
-	var directoryPath = this.Directory + "/" + folderName
-	GlobalLog.Write("'" + url + "'->'" + directoryPath + "'")
+func (this *TWebUI) InstallFileHandler() {
+	var directoryPath = AppDir + "/ui/build"
 	var fileDirectory = http.Dir(directoryPath)
 	var fileServerHandler = http.FileServer(fileDirectory)
-	http.Handle(url, http.StripPrefix(url, fileServerHandler))
+	http.Handle(this.RootURL, http.StripPrefix(this.RootURL, fileServerHandler))
 }
