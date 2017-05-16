@@ -3,6 +3,7 @@ package hn
 import (
 	"net/http"
 	"fmt"
+	"encoding/json"
 )
 
 type TWebUI struct {
@@ -23,6 +24,7 @@ func (this *TWebUI) AddHandlers() {
 	this.InstallFileHandler("/static/css")
 	this.InstallFileHandler("/static/js")
 	this.InstallFileHandler("/static/media")
+	this.AddHandler("/notes", this.GetNotes)
 }
 
 func (this *TWebUI) AddHandler(subUrl string, function func(response http.ResponseWriter, request *http.Request)) {
@@ -40,4 +42,7 @@ func (this *TWebUI) InstallFileHandler(subDir string) {
 }
 
 func (this *TWebUI) GetNotes(response http.ResponseWriter, request *http.Request) {
+	var notes = GetSampleNoteArray()
+	var data, _ = json.Marshal(&notes)
+	response.Write(data)
 }

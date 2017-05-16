@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import "./w3.css";
 
 class App extends Component {
+
   render() {
     return (
       <div className="w3-container">
@@ -13,9 +14,17 @@ class App extends Component {
       </div>
     );
   }
+
   showNotes() {
-    alert("notes");
+    let url = process.env.PUBLIC_URL + "/notes";
+    console.log(url);
+    fetch(url).then(this.receiveNotes);
   }
+
+  receiveNotes(response) {
+    console.log(response.json());
+  }
+
 }
 
 export default App;
