@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import "./w3.css";
+import NoteList from "./NoteList";
 
 class App extends Component {
+
+  serverURL = "http://localhost:9001/hnotes";
+
+  renderNotes() {
+    return <NoteList/>
+  }
 
   render() {
     return (
@@ -11,18 +17,18 @@ class App extends Component {
           <h1>hnotes</h1>
           <button onClick={() => this.showNotes()} >show notes</button>
         </div>
+        {this.renderNotes()}
       </div>
     );
   }
 
   showNotes() {
-    let url = process.env.PUBLIC_URL + "/notes";
-    console.log(url);
+    let url = this.serverURL + "/notes";
     fetch(url).then(this.receiveNotes);
   }
 
   receiveNotes(response) {
-    console.log(response.json());
+    response.json().then((data)=>{console.log(data)});
   }
 
 }

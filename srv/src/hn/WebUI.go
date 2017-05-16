@@ -29,7 +29,16 @@ func (this *TWebUI) AddHandlers() {
 
 func (this *TWebUI) AddHandler(subUrl string, function func(response http.ResponseWriter, request *http.Request)) {
 	var url = this.RootURL + subUrl
-	http.HandleFunc(url, function)
+	http.HandleFunc(url, func(response http.ResponseWriter, request *http.Request) {
+		this.WrapHandler(response, request, function)
+	})
+}
+
+func (this *TWebUI) WrapHandler(response http.ResponseWriter, request *http.Request,
+	function func(response http.ResponseWriter, request *http.Request),
+) {
+	response.Header().Set("Access-Control-Allow-Origin", "*")
+	function(response, request)
 }
 
 func (this *TWebUI) InstallFileHandler(subDir string) {
