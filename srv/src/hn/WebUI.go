@@ -38,3 +38,6 @@ func (this *TWebUI) InstallFileHandler(subDir string) {
 	fmt.Println(url + " -> " + directoryPath)
 	http.Handle(url, http.StripPrefix(url, fileServerHandler))
 }
+
+func (this *TWebUI) GetNotes(response http.ResponseWriter, request *http.Request) {
+}
