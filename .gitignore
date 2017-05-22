@@ -1,3 +1,4 @@
 srv/pkg/
 srv/hn_app.exe
 srv/src/hn/app.go
+srv/bin/
