@@ -4,32 +4,45 @@ import NoteList from "./NoteList";
 
 class App extends Component {
 
-  serverURL = "http://localhost:9001/hnotes";
+	constructor() {
+		super();
+		this.state = {
+			notes: [],
+		}
+	}
 
-  renderNotes() {
-    return <NoteList/>
-  }
+	serverURL = "http://localhost:9001/hnotes";
 
-  render() {
-    return (
-      <div className="w3-container">
-        <div className="w3-container w3-brown">
-          <h1>hnotes</h1>
-          <button onClick={() => this.showNotes()} >show notes</button>
-        </div>
-        {this.renderNotes()}
-      </div>
-    );
-  }
+	renderNotes() {
+		return <NoteList notes={this.state.notes}/>
+	}
 
-  showNotes() {
-    let url = this.serverURL + "/notes";
-    fetch(url).then(this.receiveNotes);
-  }
+	render() {
+		return (
+			<div className="w3-container">
+				<div className="w3-container w3-brown">
+					<h1><a href="#" onClick={() => this.showNotes()}>hnotes</a></h1>
+				</div>
+				{this.renderNotes()}
+			</div>
+		);
+	}
 
-  receiveNotes(response) {
-    response.json().then((data)=>{console.log(data)});
-  }
+	showNotes() {
+		let url = this.serverURL + "/notes";
+		fetch(url).then((response) => {this.receiveNotes(response);});
+	}
+
+	receiveNotes(response) {
+		response.json().then(
+			(data) => {
+				console.log(data);
+				this.setState({
+					notes: data,
+				});
+			}
+		);
+	}
 
 }
 

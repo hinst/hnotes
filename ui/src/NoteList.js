@@ -3,10 +3,15 @@ import React from 'react';
 class NoteList extends React.Component {
 
 	render() {
+		const notes = this.props.notes.map(
+			(note) => {
+				return (<li key={note.Title}>{note.Title}</li>);
+			}
+		);
 		return (
-			<div id="noteList" className="w3-container">
-				notes
-			</div>
+			<ul className="w3-ul w3-hoverable">
+				{notes}
+			</ul>
 		);
 	}
 
