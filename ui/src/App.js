@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import "./w3.css";
 import NoteList from "./NoteList";
+import RegisterPage from "./RegisterPage";
 
 class App extends Component {
 
@@ -8,6 +9,7 @@ class App extends Component {
 		super();
 		this.state = {
 			notes: [],
+			activePage: "register",
 		}
 	}
 
@@ -17,13 +19,20 @@ class App extends Component {
 		return <NoteList notes={this.state.notes}/>
 	}
 
+	renderActivePage() {
+		if (this.activePage == "")
+			return (<div></div>);
+		else if (this.activePage = "register")
+			return (<RegisterPage/>);
+	}
+
 	render() {
 		return (
 			<div className="w3-container">
 				<div className="w3-container w3-brown">
 					<h1><a href="#" onClick={() => this.showNotes()}>hnotes</a></h1>
 				</div>
-				{this.renderNotes()}
+				{this.renderActivePage()}
 			</div>
 		);
 	}
