@@ -15,17 +15,25 @@ class RegisterPage extends React.Component {
 		return(
 			<div className="w3-container">
 				<h2>Register</h2>
-				<label>Username</label>
+				<label>Username:</label>
 				<input className="w3-input w3-border" type="text"/>
 				<div style={{height: 4}}/>
-				<label>Password</label>
+				<label>Password:</label>
 				<input className="w3-input w3-border" type="password"/>
 				<div style={{height: 4}}/>
-				<label>Retype password</label>
+				<label>Retype password:</label>
 				<input className="w3-input w3-border" type="password"/>
 				<div style={{height: 8}}/>
+				<img src={
+					(this.state.captchaId !== "")
+					? (this.props.serverURL + "/captcha/" + this.state.captchaId + ".png")
+					: null
+				} alt="captcha"/>
+				<div style={{height: 4}}/>
+				<label>Text from image:</label>
+				<input className="w3-input w3-border" type="text"/>
+				<div style={{height: 8}}/>
 				<button className="w3-button w3-round w3-border">Register</button>
-				<img src={this.props.serverURL + "/captcha/" + this.state.captchaId + ".png"} alt="captcha"/>
 			</div>
 		);
 	}
