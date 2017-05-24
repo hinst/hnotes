@@ -26,7 +26,8 @@ func (this *TWebUI) AddHandlers() {
 	this.InstallFileHandler("/static/js")
 	this.InstallFileHandler("/static/media")
 	this.AddHandler("/notes", this.GetNotes)
-	http.Handle("/captcha", captcha.Server(100, 50))
+	this.AddHandler("/getCaptcha", this.GetCaptcha)
+	http.Handle(this.RootURL + "/captcha/", captcha.Server(captcha.StdWidth, captcha.StdHeight))
 }
 
 func (this *TWebUI) AddHandler(subUrl string, function func(response http.ResponseWriter, request *http.Request)) {

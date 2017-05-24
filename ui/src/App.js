@@ -10,20 +10,31 @@ class App extends Component {
 		this.state = {
 			notes: [],
 			activePage: "register",
+			serverURL: "http://localhost:9001/hnotes",
 		}
 	}
-
-	serverURL = "http://localhost:9001/hnotes";
 
 	renderNotes() {
 		return <NoteList notes={this.state.notes}/>
 	}
 
+	/*
+	setActivePage(activePage) {
+		if (this.state.activePage != activePage) {
+			this.setState({
+				activePage: activePage,
+			});
+			if (activePage == "register") {
+			}
+		}
+	}
+	*/
+
 	renderActivePage() {
-		if (this.activePage == "")
+		if (this.state.activePage === "")
 			return (<div></div>);
-		else if (this.activePage = "register")
-			return (<RegisterPage/>);
+		else if (this.state.activePage === "register")
+			return (<RegisterPage serverURL={this.state.serverURL}/>);
 	}
 
 	render() {
@@ -38,7 +49,7 @@ class App extends Component {
 	}
 
 	showNotes() {
-		let url = this.serverURL + "/notes";
+		let url = this.state.serverURL + "/notes";
 		fetch(url).then((response) => {this.receiveNotes(response);});
 	}
 

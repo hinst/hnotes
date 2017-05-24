@@ -3,12 +3,12 @@ import "./w3.css";
 
 class RegisterPage extends React.Component {
 
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		this.state = {
-			captchaImageURL = "",
+			captchaId: "",
 		};
-		requestCaptcha();
+		this.requestCaptcha();
 	}
 
 	render() {
@@ -25,12 +25,24 @@ class RegisterPage extends React.Component {
 				<input className="w3-input w3-border" type="password"/>
 				<div style={{height: 8}}/>
 				<button className="w3-button w3-round w3-border">Register</button>
+				<img src={this.props.serverURL + "/captcha/" + this.state.captchaId + ".png"} alt="captcha"/>
 			</div>
 		);
 	}
 
 	requestCaptcha() {
-		fetch(this.serverURL + "/getCaptcha");
+		fetch(this.props.serverURL + "/getCaptcha").then((response) => this.receiveCaptchaResponse(response));
+	}
+
+	receiveCaptchaResponse(response) {
+		response.text().then((text) => this.receiveCaptchaText(text));
+	}
+
+	receiveCaptchaText(text) {
+		console.log("'" + text + "'");
+		this.setState({
+			captchaId: text,
+		});
 	}
 
 }
