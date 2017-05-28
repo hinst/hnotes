@@ -16,3 +16,14 @@ func (this *TDataOp) Create(transaction *bolt.Tx) *TDataOp {
 func (this *TDataOp) EnsureBuckets() {
 	this.tx.CreateBucketIfNotExists(DataKeyUsers)
 }
+
+func (this *TDataOp) CheckUserExists(user TUser) bool {
+	var userData = this.tx.Bucket(DataKeyUsers).Get(user.GetNameBytes())
+	return userData != nil
+}
+
+func (this *TDataOp) AddNewUser(user TUser) {
+	if user.CheckValid() && false == this.CheckUserExists(user) {
+		this.tx.Bucket(DataKeyUsers).Put(user.GetNameBytes(), user.GetData())
+	}
+}
