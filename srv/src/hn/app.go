@@ -17,7 +17,7 @@ func (this *TApp) Run() {
 	this.Holder.Add(1)
 	this.DataMan = (&TDataMan{}).Create()
 	this.DataMan.Start()
-	this.WebUI = (&TWebUI{}).Create()
+	this.WebUI = (&TWebUI{DataMan: this.DataMan}).Create()
 	this.WebUI.Start()
 	go http.ListenAndServe(":9001", nil)
 	InstallShutdownReceiver(this.stop)

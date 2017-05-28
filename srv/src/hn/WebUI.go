@@ -9,6 +9,7 @@ import (
 
 type TWebUI struct {
 	RootURL string
+	DataMan *TDataMan
 }
 
 func (this *TWebUI) Create() *TWebUI {
@@ -62,4 +63,13 @@ func (this *TWebUI) GetNotes(response http.ResponseWriter, request *http.Request
 func (this *TWebUI) GetCaptcha(response http.ResponseWriter, request *http.Request) {
 	var id = captcha.New()
 	response.Write([]byte(id))
+}
+
+func (this *TWebUI) RegisterNewUser(response http.ResponseWriter, request *http.Request) {
+	var args struct {captchaId, captcha, user, password string}
+	if json.NewDecoder(request.Body).Decode(&args) == nil {
+		if captcha.VerifyString(args.captchaId, args.captcha) {
+			this.DataMan.RegisterUser(TUser{name: args.user, password: args.password})
+		}
+	}
 }
