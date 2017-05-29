@@ -80,9 +80,11 @@ func (this *TWebUI) GetCaptcha(response http.ResponseWriter, request *http.Reque
 
 func (this *TWebUI) RegisterNewUser(response http.ResponseWriter, request *http.Request) {
 	var args struct {captchaId, captcha, user, password string}
+	var responseObject struct { success bool }
 	if json.NewDecoder(request.Body).Decode(&args) == nil {
 		if captcha.VerifyString(args.captchaId, args.captcha) {
-			this.DataMan.RegisterUser(TUser{name: args.user, password: args.password})
+			responseObject.success = this.DataMan.RegisterUser(TUser{name: args.user, password: args.password})
 		}
 	}
+	response.Write(JsonMarshal(&responseObject))
 }

@@ -19,11 +19,16 @@ func (this *TApp) Run() {
 	this.DataMan.Start()
 	this.WebUI = (&TWebUI{DataMan: this.DataMan}).Create()
 	this.WebUI.Start()
-	go http.ListenAndServe(":9001", nil)
+	go this.startWebServer()
 	InstallShutdownReceiver(this.stop)
 	this.Holder.Wait()
 	this.WebUI.Stop()
 	this.DataMan.Stop()
+}
+
+func (this *TApp) startWebServer() {
+	var result = http.ListenAndServe(":9001", nil)
+	AssertResult(result)
 }
 
 func (this *TApp) stop() {
