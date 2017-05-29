@@ -4,6 +4,7 @@ import "os"
 import "path/filepath"
 import "sync"
 import "net/http"
+import "fmt"
 
 type TApp struct {
 	Holder sync.WaitGroup
@@ -14,6 +15,7 @@ type TApp struct {
 var AppDir, _ = filepath.Abs(filepath.Dir(os.Args[0]))
 
 func (this *TApp) Run() {
+	fmt.Println(MakeRandomString(10))
 	this.Holder.Add(1)
 	this.DataMan = (&TDataMan{}).Create()
 	this.DataMan.Start()

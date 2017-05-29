@@ -89,3 +89,13 @@ func (this *TWebUI) RegisterNewUser(response http.ResponseWriter, request *http.
 	}
 	response.Write(JsonMarshal(&responseObject))
 }
+
+func (this *TWebUI) Login(response http.ResponseWriter, request *http.Request) {
+	var args struct { User, Password string }
+	var responseObject struct { SessionKey string }
+	if json.NewDecoder(request.Body).Decode(&args) == nil {
+		var user = TUser{name: args.User, password: args.Password}
+		responseObject.SessionKey = this.DataMan.Login(user)
+	}
+	response.Write(JsonMarshal(&responseObject))
+}

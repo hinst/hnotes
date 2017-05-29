@@ -30,8 +30,8 @@ func (this *TDataMan) Begin(canWrite bool) *bolt.Tx {
 
 func (this *TDataMan) EnsureBuckets() {
 	var tx = this.Begin(true)
-	(&TDataOp{}).Create(tx).EnsureBuckets()
 	defer tx.Commit()
+	(&TDataOp{}).Create(tx).EnsureBuckets()
 }
 
 func (this *TDataMan) RegisterUser(user TUser) (result bool) {
@@ -39,6 +39,18 @@ func (this *TDataMan) RegisterUser(user TUser) (result bool) {
 		this.db.Update(
 			func(tx *bolt.Tx) error {
 				result = (&TDataOp{}).Create(tx).AddNewUser(user)
+				return nil
+			})
+	}
+	return
+}
+
+func (this *TDataMan) Login(user TUser) (SessionKey string) {
+	if user.CheckValid() {
+		this.db.Update(
+			func(tx *bolt.Tx) error {
+				var op = (&TDataOp{}).Create(tx)
+				SessionKey = op.Login(user)
 				return nil
 			})
 	}
