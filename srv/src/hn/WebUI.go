@@ -87,6 +87,5 @@ func (this *TWebUI) RegisterNewUser(response http.ResponseWriter, request *http.
 			responseObject.Success = this.DataMan.RegisterUser(TUser{name: args.User, password: args.Password})
 		}
 	}
-	var responseData = JsonMarshal(&responseObject)
-	response.Write(responseData)
+	response.Write(JsonMarshal(&responseObject))
 }
