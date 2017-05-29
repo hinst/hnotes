@@ -6,6 +6,9 @@ class RegisterPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			userName: "",
+			password: "",
+			retypedPassword: "",
 			captchaId: "",
 		};
 		this.requestCaptcha();
@@ -16,10 +19,16 @@ class RegisterPage extends React.Component {
 			<div className="w3-container">
 				<h2>Register</h2>
 				<label>Username:</label>
-				<input className="w3-input w3-border" type="text"/>
+				<input className="w3-input w3-border" type="text" onChange={(e)=>this.handleUsernameChange(e)}/>
 				<div style={{height: 4}}/>
 				<label>Password:</label>
-				<input className="w3-input w3-border" type="password"/>
+				<input 
+					className="w3-input w3-border" 
+					type="password"
+					onChange={(event)=>{
+							
+					}}
+				/>
 				<div style={{height: 4}}/>
 				<label>Retype password:</label>
 				<input className="w3-input w3-border" type="password"/>
@@ -33,7 +42,12 @@ class RegisterPage extends React.Component {
 				<label>Text from image:</label>
 				<input className="w3-input w3-border" type="text"/>
 				<div style={{height: 8}}/>
-				<button className="w3-button w3-round w3-border">Register</button>
+				<button 
+					className="w3-button w3-round w3-border" 
+					onClick={()=>this.receiveRegisterButtonClick()}
+				>
+					Register
+				</button>
 			</div>
 		);
 	}
@@ -51,6 +65,14 @@ class RegisterPage extends React.Component {
 		this.setState({
 			captchaId: text,
 		});
+	}
+
+	receiveRegisterButtonClick() {
+		console.log(this.state.userName);
+	}
+
+	handleUsernameChange(event) {
+		this.setState({userName: event.target.value});
 	}
 
 }
