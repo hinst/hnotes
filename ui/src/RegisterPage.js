@@ -113,6 +113,17 @@ class RegisterPage extends React.Component {
 
 	receiveRegisterResponse(data) {
 		console.log(data);
+		if (data.CaptchaSuccess) {
+			if (data.Success) {
+
+			} else {
+				this.requestCaptcha();
+				alert("Could not register this username.");
+			}
+		} else {
+			this.requestCaptcha();
+			alert("Image verification code is incorrect.");
+		}
 	}
 
 }
