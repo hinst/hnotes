@@ -79,12 +79,14 @@ func (this *TWebUI) GetCaptcha(response http.ResponseWriter, request *http.Reque
 }
 
 func (this *TWebUI) RegisterNewUser(response http.ResponseWriter, request *http.Request) {
-	var args struct {captchaId, captcha, user, password string}
-	var responseObject struct { success bool }
+	var args struct {CaptchaId, Captcha, User, Password string}
+	var responseObject struct { CaptchaSuccess, Success bool }
 	if json.NewDecoder(request.Body).Decode(&args) == nil {
-		if captcha.VerifyString(args.captchaId, args.captcha) {
-			responseObject.success = this.DataMan.RegisterUser(TUser{name: args.user, password: args.password})
+		if captcha.VerifyString(args.CaptchaId, args.Captcha) {
+			responseObject.CaptchaSuccess = true
+			responseObject.Success = this.DataMan.RegisterUser(TUser{name: args.User, password: args.Password})
 		}
 	}
-	response.Write(JsonMarshal(&responseObject))
+	var responseData = JsonMarshal(&responseObject)
+	response.Write(responseData)
 }

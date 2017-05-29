@@ -49,7 +49,7 @@ class App extends Component {
 	}
 
 	showNotes() {
-		let url = this.state.serverURL + "/notes";
+		const url = this.state.serverURL + "/notes";
 		fetch(url).then((response) => {this.receiveNotes(response);});
 	}
 

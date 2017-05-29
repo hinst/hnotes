@@ -10,6 +10,7 @@ class RegisterPage extends React.Component {
 			password: "",
 			retypedPassword: "",
 			captchaId: "",
+			captcha: "",
 		};
 		this.requestCaptcha();
 	}
@@ -25,13 +26,19 @@ class RegisterPage extends React.Component {
 				<input 
 					className="w3-input w3-border" 
 					type="password"
-					onChange={(event)=>{
-							
+					onChange={(event) => {
+						this.setState({password: event.target.value});
 					}}
 				/>
 				<div style={{height: 4}}/>
 				<label>Retype password:</label>
-				<input className="w3-input w3-border" type="password"/>
+				<input 
+					className="w3-input w3-border" 
+					type="password"
+					onChange={(event) => {
+						this.setState({retypedPassword: event.target.value});
+					}}
+				/>
 				<div style={{height: 8}}/>
 				<img src={
 					(this.state.captchaId !== "")
@@ -40,7 +47,13 @@ class RegisterPage extends React.Component {
 				} alt="captcha"/>
 				<div style={{height: 4}}/>
 				<label>Text from image:</label>
-				<input className="w3-input w3-border" type="text"/>
+				<input 
+					className="w3-input w3-border" 
+					type="text"
+					onChange={(event) => {
+						this.setState({captcha: event.target.value});
+					}}
+				/>
 				<div style={{height: 8}}/>
 				<button 
 					className="w3-button w3-round w3-border" 
@@ -68,11 +81,38 @@ class RegisterPage extends React.Component {
 	}
 
 	receiveRegisterButtonClick() {
-		console.log(this.state.userName);
+		if (this.state.password === this.state.retypedPassword) {
+			if (this.state.password.length > 0) {
+				this.sendRegisterRequest();
+			} else {
+				alert("Password is empty");
+			}
+		} else {
+			alert("Passwords do not match");
+		}
 	}
 
 	handleUsernameChange(event) {
 		this.setState({userName: event.target.value});
+	}
+
+	sendRegisterRequest() {
+		const url = this.props.serverURL + "/registerNewUser";
+		fetch(url, {
+			method: "post",
+			body: JSON.stringify({
+				CaptchaId: this.state.captchaId,
+				Captcha: this.state.captcha,
+				User: this.state.userName,
+				Password: this.state.password,
+			}),
+		}).then(
+			(response) => response.json().then((data) => this.receiveRegisterResponse(data))
+		);
+	}
+
+	receiveRegisterResponse(data) {
+		console.log(data);
 	}
 
 }
