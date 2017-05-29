@@ -22,8 +22,10 @@ func (this *TDataOp) CheckUserExists(user TUser) bool {
 	return userData != nil
 }
 
-func (this *TDataOp) AddNewUser(user TUser) {
+func (this *TDataOp) AddNewUser(user TUser) (result bool) {
 	if user.CheckValid() && false == this.CheckUserExists(user) {
-		this.tx.Bucket(DataKeyUsers).Put(user.GetNameBytes(), user.GetData())
+		var putResult = this.tx.Bucket(DataKeyUsers).Put(user.GetNameBytes(), user.GetData())
+		result = putResult == nil
 	}
+	return
 }

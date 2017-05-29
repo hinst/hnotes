@@ -5,9 +5,13 @@ import (
 	"fmt"
 	"encoding/json"
 	"captcha"
+	"sync"
+	"sync/atomic"
 )
 
 type TWebUI struct {
+	Blocked int32
+	WaitGroup sync.WaitGroup
 	RootURL string
 	DataMan *TDataMan
 }
@@ -21,6 +25,11 @@ func (this *TWebUI) Start() {
 	this.AddHandlers()
 }
 
+func (this *TWebUI) Stop() {
+	atomic.AddInt32(&this.Blocked, 1)
+	this.WaitGroup.Wait()
+}
+
 func (this *TWebUI) AddHandlers() {
 	this.InstallFileHandler("")
 	this.InstallFileHandler("/static/css")
@@ -28,6 +37,7 @@ func (this *TWebUI) AddHandlers() {
 	this.InstallFileHandler("/static/media")
 	this.AddHandler("/notes", this.GetNotes)
 	this.AddHandler("/getCaptcha", this.GetCaptcha)
+	this.AddHandler("/registerNewUser", this.RegisterNewUser)
 	http.Handle(this.RootURL + "/captcha/", captcha.Server(captcha.StdWidth, captcha.StdHeight))
 }
 
@@ -41,6 +51,9 @@ func (this *TWebUI) AddHandler(subUrl string, function func(response http.Respon
 func (this *TWebUI) WrapHandler(response http.ResponseWriter, request *http.Request,
 	function func(response http.ResponseWriter, request *http.Request),
 ) {
+	this.WaitGroup.Add(1)
+	if atomic.CompareAndSwapInt32(&this.Blocked, 1, 1) { return }
+	defer this.WaitGroup.Done()
 	response.Header().Set("Access-Control-Allow-Origin", "*")
 	function(response, request)
 }

@@ -22,6 +22,7 @@ func (this *TApp) Run() {
 	go http.ListenAndServe(":9001", nil)
 	InstallShutdownReceiver(this.stop)
 	this.Holder.Wait()
+	this.WebUI.Stop()
 	this.DataMan.Stop()
 }
 
