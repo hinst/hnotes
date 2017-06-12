@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"fmt"
 	"encoding/json"
-	"captcha"
 	"sync"
 	"sync/atomic"
 )
@@ -70,12 +69,3 @@ func (this *TWebUI) GetNotes(response http.ResponseWriter, request *http.Request
 	response.Write(data)
 }
 
-func (this *TWebUI) Login(response http.ResponseWriter, request *http.Request) {
-	var args struct { User, Password string }
-	var responseObject struct { SessionKey string }
-	if json.NewDecoder(request.Body).Decode(&args) == nil {
-		var user = TUser{name: args.User, password: args.Password}
-		responseObject.SessionKey = this.DataMan.Login(user)
-	}
-	response.Write(JsonMarshal(&responseObject))
-}
