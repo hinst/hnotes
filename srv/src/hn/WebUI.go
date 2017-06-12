@@ -52,8 +52,8 @@ func (this *TWebUI) WrapHandler(response http.ResponseWriter, request *http.Requ
 	function func(response http.ResponseWriter, request *http.Request),
 ) {
 	this.WaitGroup.Add(1)
-	if atomic.CompareAndSwapInt32(&this.Blocked, 1, 1) { return }
 	defer this.WaitGroup.Done()
+	if atomic.CompareAndSwapInt32(&this.Blocked, 1, 1) { return }
 	response.Header().Set("Access-Control-Allow-Origin", "*")
 	function(response, request)
 }
