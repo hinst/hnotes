@@ -36,9 +36,6 @@ func (this *TWebUI) AddHandlers() {
 	this.InstallFileHandler("/static/js")
 	this.InstallFileHandler("/static/media")
 	this.AddHandler("/notes", this.GetNotes)
-	this.AddHandler("/getCaptcha", this.GetCaptcha)
-	this.AddHandler("/registerNewUser", this.RegisterNewUser)
-	http.Handle(this.RootURL + "/captcha/", captcha.Server(captcha.StdWidth, captcha.StdHeight))
 }
 
 func (this *TWebUI) AddHandler(subUrl string, function func(response http.ResponseWriter, request *http.Request)) {
@@ -71,23 +68,6 @@ func (this *TWebUI) GetNotes(response http.ResponseWriter, request *http.Request
 	var notes = GetSampleNoteArray()
 	var data, _ = json.Marshal(&notes)
 	response.Write(data)
-}
-
-func (this *TWebUI) GetCaptcha(response http.ResponseWriter, request *http.Request) {
-	var id = captcha.New()
-	response.Write([]byte(id))
-}
-
-func (this *TWebUI) RegisterNewUser(response http.ResponseWriter, request *http.Request) {
-	var args struct {CaptchaId, Captcha, User, Password string}
-	var responseObject struct { CaptchaSuccess, Success bool }
-	if json.NewDecoder(request.Body).Decode(&args) == nil {
-		if captcha.VerifyString(args.CaptchaId, args.Captcha) {
-			responseObject.CaptchaSuccess = true
-			responseObject.Success = this.DataMan.RegisterUser(TUser{name: args.User, password: args.Password})
-		}
-	}
-	response.Write(JsonMarshal(&responseObject))
 }
 
 func (this *TWebUI) Login(response http.ResponseWriter, request *http.Request) {

@@ -4,6 +4,8 @@ import (
 	"sync"
 	"net/http"
 	"sync/atomic"
+	"captcha"
+	"encoding/json"
 )
 
 type TUserMan struct {
@@ -20,7 +22,9 @@ func (this *TUserMan) Create() *TUserMan {
 }
 
 func (this *TUserMan) Start() {
-
+	this.AddHandler("/getCaptcha", this.GetCaptcha)
+	this.AddHandler("/registerNewUser", this.RegisterNewUser)
+	http.Handle(this.AppUrl + "/captcha/", captcha.Server(captcha.StdWidth, captcha.StdHeight))
 }
 
 func (this *TUserMan) Stop() {
@@ -43,6 +47,23 @@ func (this *TUserMan) WrapHandler(response http.ResponseWriter, request *http.Re
 	if atomic.CompareAndSwapInt32(&this.Blocked, 1, 1) { return }
 	response.Header().Set("Access-Control-Allow-Origin", "*")
 	function(response, request)
+}
+
+func (this *TUserMan) GetCaptcha(response http.ResponseWriter, request *http.Request) {
+	var id = captcha.New()
+	response.Write([]byte(id))
+}
+
+func (this *TUserMan) RegisterNewUser(response http.ResponseWriter, request *http.Request) {
+	var args struct {CaptchaId, Captcha, User, Password string}
+	var responseObject struct { CaptchaSuccess, Success bool }
+	if json.NewDecoder(request.Body).Decode(&args) == nil {
+		if captcha.VerifyString(args.CaptchaId, args.Captcha) {
+			responseObject.CaptchaSuccess = true
+			responseObject.Success = this.DataMan.RegisterUser(TUser{name: args.User, password: args.Password})
+		}
+	}
+	response.Write(JsonMarshal(&responseObject))
 }
 
 
