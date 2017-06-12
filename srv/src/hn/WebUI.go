@@ -1,22 +1,23 @@
 package hn
 
 import (
-	"net/http"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"huser"
+	"net/http"
 	"sync"
 	"sync/atomic"
 )
 
 type TWebUI struct {
-	Blocked int32
+	Blocked   int32
 	WaitGroup sync.WaitGroup
-	RootURL string
-	DataMan *TDataMan
+	AppUrl    string
+	DataMan   *TDataMan
+	UserMan   *huser.TUserMan
 }
 
 func (this *TWebUI) Create() *TWebUI {
-	this.RootURL = "/hnotes"
 	return this
 }
 
@@ -38,7 +39,7 @@ func (this *TWebUI) AddHandlers() {
 }
 
 func (this *TWebUI) AddHandler(subUrl string, function func(response http.ResponseWriter, request *http.Request)) {
-	var url = this.RootURL + subUrl
+	var url = this.AppUrl + subUrl
 	http.HandleFunc(url, func(response http.ResponseWriter, request *http.Request) {
 		this.WrapHandler(response, request, function)
 	})
@@ -49,14 +50,16 @@ func (this *TWebUI) WrapHandler(response http.ResponseWriter, request *http.Requ
 ) {
 	this.WaitGroup.Add(1)
 	defer this.WaitGroup.Done()
-	if atomic.CompareAndSwapInt32(&this.Blocked, 1, 1) { return }
+	if atomic.CompareAndSwapInt32(&this.Blocked, 1, 1) {
+		return
+	}
 	response.Header().Set("Access-Control-Allow-Origin", "*")
 	function(response, request)
 }
 
 func (this *TWebUI) InstallFileHandler(subDir string) {
-	var directoryPath = AppDir + "/../ui/build" +subDir
-	var url = this.RootURL + subDir + "/"
+	var directoryPath = AppDir + "/../ui/build" + subDir
+	var url = this.AppUrl + subDir + "/"
 	var fileDirectory = http.Dir(directoryPath)
 	var fileServerHandler = http.FileServer(fileDirectory)
 	fmt.Println(url + " -> " + directoryPath)
@@ -68,4 +71,3 @@ func (this *TWebUI) GetNotes(response http.ResponseWriter, request *http.Request
 	var data, _ = json.Marshal(&notes)
 	response.Write(data)
 }
-

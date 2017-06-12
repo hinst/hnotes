@@ -12,7 +12,7 @@ type TUserMan struct {
 	WebBlocked int32
 	AppUrl string
 	FilePath string
-	WebWaitGroup *sync.WaitGroup
+	WebWaitGroup sync.WaitGroup
 	DataMan *TDataMan
 }
 
