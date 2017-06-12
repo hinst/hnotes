@@ -1,10 +1,11 @@
-package hn
+package huser
 
 import (
 	"github.com/boltdb/bolt"
 )
 
 type TDataMan struct {
+	FilePath string
 	db *bolt.DB
 }
 
@@ -13,7 +14,7 @@ func (this *TDataMan) Create() *TDataMan {
 }
 
 func (this *TDataMan) Start() {
-	var db, dbResult = bolt.Open(AppDir + "/data/data.db", 0600, nil)
+	var db, dbResult = bolt.Open(this.FilePath, 0600, nil)
 	if dbResult == nil {
 		this.db = db
 		this.EnsureBuckets()

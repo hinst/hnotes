@@ -1,4 +1,4 @@
-package hn
+package huser
 
 import "crypto/rand"
 import "encoding/base64"

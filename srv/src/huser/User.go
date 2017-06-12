@@ -1,4 +1,4 @@
-package hn
+package huser
 
 import (
 	"encoding/json"

@@ -1,3 +1,3 @@
-package hn
+package huser
 
 var DataKeyUsers = []byte("Users")

@@ -1,4 +1,4 @@
-package hn
+package huser
 
 import (
 	"github.com/boltdb/bolt"
