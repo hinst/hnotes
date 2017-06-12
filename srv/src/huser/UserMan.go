@@ -64,17 +64,22 @@ func (this *TUserMan) RegisterNewUser(response http.ResponseWriter, request *htt
 	if json.NewDecoder(request.Body).Decode(&args) == nil {
 		if captcha.VerifyString(args.CaptchaId, args.Captcha) {
 			responseObject.CaptchaSuccess = true
-			responseObject.Success = this.DataMan.RegisterUser(TUser{name: args.User, password: args.Password})
+			var user TUser
+			user.name = args.User
+			user.SetPassword(args.Password)
+			responseObject.Success = this.DataMan.RegisterUser(user)
 		}
 	}
 	response.Write(JsonMarshal(&responseObject))
 }
 
-func (this *TWebUI) Login(response http.ResponseWriter, request *http.Request) {
+func (this *TUserMan) Login(response http.ResponseWriter, request *http.Request) {
 	var args struct { User, Password string }
 	var responseObject struct { SessionKey string }
 	if json.NewDecoder(request.Body).Decode(&args) == nil {
-		var user = TUser{name: args.User, password: args.Password}
+		var user TUser
+		user.name = args.User
+		user.SetPassword(args.Password)
 		responseObject.SessionKey = this.DataMan.Login(user)
 	}
 	response.Write(JsonMarshal(&responseObject))

@@ -44,7 +44,7 @@ func (this *TDataOp) ReadUser(name string) (result TUser) {
 func (this *TDataOp) Login(user TUser) (SessionKey string) {
 	var serverUser = this.ReadUser(user.name)
 	if serverUser.CheckValid() {
-		if user.password == serverUser.password {
+		if user.PasswordHash == serverUser.PasswordHash {
 			serverUser.SessionKey = serverUser.NewSessionKey()
 			this.WriteUser(serverUser)
 			SessionKey = serverUser.SessionKey
