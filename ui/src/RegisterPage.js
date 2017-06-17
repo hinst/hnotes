@@ -144,8 +144,7 @@ class RegisterPage extends React.Component {
 		return (
 			<div className="w3-container">
 				<h2>Register</h2>
-				<p>Username registered successfully</p>
-				<div className="w3-panel w3-lime w3-leftbar w3-border-green"></div>
+				<p>Username registered successfully: "{this.state.registeredUsername}"</p>
 			</div>
 		);
 	}
