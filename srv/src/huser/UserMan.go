@@ -14,11 +14,13 @@ type TUserMan struct {
 	FilePath string
 	WebWaitGroup sync.WaitGroup
 	DataMan *TDataMan
+	UserPasswordMinLength int
 }
 
 func (this *TUserMan) Create() *TUserMan {
 	this.DataMan = (&TDataMan{}).Create()
 	this.DataMan.FilePath = this.FilePath
+	this.UserPasswordMinLength = 10
 	return this
 }
 
@@ -60,14 +62,17 @@ func (this *TUserMan) GetCaptcha(response http.ResponseWriter, request *http.Req
 
 func (this *TUserMan) RegisterNewUser(response http.ResponseWriter, request *http.Request) {
 	var args struct {CaptchaId, Captcha, User, Password string}
-	var responseObject struct { CaptchaSuccess, Success bool }
+	var responseObject struct { CaptchaSuccess, PasswordLengthSuccess, Success bool }
 	if json.NewDecoder(request.Body).Decode(&args) == nil {
 		if captcha.VerifyString(args.CaptchaId, args.Captcha) {
 			responseObject.CaptchaSuccess = true
 			var user TUser
 			user.name = args.User
-			user.SetPassword(args.Password)
-			responseObject.Success = this.DataMan.RegisterUser(user)
+			if len(args.Password) >= this.UserPasswordMinLength {
+				responseObject.PasswordLengthSuccess = true
+				user.SetPassword(args.Password)
+				responseObject.Success = this.DataMan.RegisterUser(user)
+			}
 		}
 	}
 	response.Write(JsonMarshal(&responseObject))
