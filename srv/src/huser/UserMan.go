@@ -29,6 +29,7 @@ func (this *TUserMan) Start() {
 	this.AddHandler("/getCaptcha", this.GetCaptcha)
 	this.AddHandler("/registerNewUser", this.RegisterNewUser)
 	this.AddHandler("/login", this.Login)
+	this.AddHandler("/getUserPasswordMinLength", this.GetUserPasswordMinLength)
 	http.Handle(this.AppUrl + "/captcha/", captcha.Server(captcha.StdWidth, captcha.StdHeight))
 }
 
@@ -62,8 +63,9 @@ func (this *TUserMan) GetCaptcha(response http.ResponseWriter, request *http.Req
 
 func (this *TUserMan) RegisterNewUser(response http.ResponseWriter, request *http.Request) {
 	var args struct {CaptchaId, Captcha, User, Password string}
-	var responseObject struct { CaptchaSuccess, PasswordLengthSuccess, Success bool }
+	var responseObject struct { UserName string; CaptchaSuccess, PasswordLengthSuccess, Success bool }
 	if json.NewDecoder(request.Body).Decode(&args) == nil {
+		responseObject.UserName = args.User
 		if captcha.VerifyString(args.CaptchaId, args.Captcha) {
 			responseObject.CaptchaSuccess = true
 			var user TUser
@@ -87,5 +89,11 @@ func (this *TUserMan) Login(response http.ResponseWriter, request *http.Request)
 		user.SetPassword(args.Password)
 		responseObject.SessionKey = this.DataMan.Login(user)
 	}
+	response.Write(JsonMarshal(&responseObject))
+}
+
+func (this *TUserMan) GetUserPasswordMinLength(response http.ResponseWriter, request *http.Request) {
+	var responseObject struct { UserPasswordMinLength int }
+	responseObject.UserPasswordMinLength = this.UserPasswordMinLength
 	response.Write(JsonMarshal(&responseObject))
 }

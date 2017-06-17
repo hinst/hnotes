@@ -11,18 +11,29 @@ class RegisterPage extends React.Component {
 			retypedPassword: "",
 			captchaId: "",
 			captcha: "",
+			success: false,
+			registeredUsername: "",
+			passwordMinLength: 0,
 		};
 		this.requestCaptcha();
+		this.requestPasswordMinLength();
 	}
 
 	render() {
+		if (this.state.success)
+			return this.renderSuccessPanel();
+		else
+			return this.renderRegisterForm();
+	}
+	
+	renderRegisterForm() {
 		return(
 			<div className="w3-container">
 				<h2>Register</h2>
 				<label>Username:</label>
 				<input className="w3-input w3-border" type="text" onChange={(e)=>this.handleUsernameChange(e)}/>
 				<div style={{height: 4}}/>
-				<label>Password:</label>
+				<label>Password: must contain at least {this.state.passwordMinLength} characters</label>
 				<input 
 					className="w3-input w3-border" 
 					type="password"
@@ -115,7 +126,10 @@ class RegisterPage extends React.Component {
 		console.log(data);
 		if (data.CaptchaSuccess) {
 			if (data.Success) {
-
+				this.setState({
+					success: true,
+					registeredUsername: data.UserName,
+				});
 			} else {
 				this.requestCaptcha();
 				alert("Could not register this username.");
@@ -124,6 +138,26 @@ class RegisterPage extends React.Component {
 			this.requestCaptcha();
 			alert("Image verification code is incorrect.");
 		}
+	}
+
+	renderSuccessPanel() {
+		return (
+			<div className="w3-container">
+				<h2>Register</h2>
+				<p>Username registered successfully</p>
+				<div className="w3-panel w3-lime w3-leftbar w3-border-green"></div>
+			</div>
+		);
+	}
+
+	requestPasswordMinLength() {
+		fetch(this.props.serverURL + "/getUserPasswordMinLength").then(
+			(response) => {
+				response.json().then(
+					(o) => this.setState({passwordMinLength: o.UserPasswordMinLength})
+				)
+			}
+		);
 	}
 
 }
